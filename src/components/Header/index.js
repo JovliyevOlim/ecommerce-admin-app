@@ -29,11 +29,13 @@ function Header(props) {
     function renderLoggedInLinks(){
         return (
             <Nav>
-                <li className={'link'}><NavLink exact to={'/'}>Home</NavLink></li>
-                <li className={'link'}><NavLink to={'/page'}>Page</NavLink></li>
-                <li className={'link'}><NavLink to={'/category'}>Category</NavLink></li>
-                <li className={'link'}><NavLink to={'/products'}>Products</NavLink></li>
-                <li className={'link'}><NavLink to={'/orders'}>Orders</NavLink></li>
+                <div className={'header-link'}>
+                    <li className={'link'}><NavLink exact to={'/'}>Home</NavLink></li>
+                    <li className={'link'}><NavLink to={'/page'}>Page</NavLink></li>
+                    <li className={'link'}><NavLink to={'/category'}>Category</NavLink></li>
+                    <li className={'link'}><NavLink to={'/products'}>Products</NavLink></li>
+                    <li className={'link'}><NavLink to={'/orders'}>Orders</NavLink></li>
+                </div>
                 <li className='nav-item link-item'>
                     <span onClick={logout} className="nav-link">Signout</span>
                 </li>
