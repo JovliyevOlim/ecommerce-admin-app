@@ -3,6 +3,7 @@ import {Container, Nav, Navbar} from "react-bootstrap";
 import {Link, NavLink} from 'react-router-dom'
 import {useDispatch, useSelector} from "react-redux";
 import {signout} from "../../action";
+import './style.css'
 function Header(props) {
 
     const auth = useSelector(state => state.auth);
@@ -28,7 +29,12 @@ function Header(props) {
     function renderLoggedInLinks(){
         return (
             <Nav>
-                <li className='nav-item'>
+                <li className={'link'}><NavLink exact to={'/'}>Home</NavLink></li>
+                <li className={'link'}><NavLink to={'/page'}>Page</NavLink></li>
+                <li className={'link'}><NavLink to={'/category'}>Category</NavLink></li>
+                <li className={'link'}><NavLink to={'/products'}>Products</NavLink></li>
+                <li className={'link'}><NavLink to={'/orders'}>Orders</NavLink></li>
+                <li className='nav-item link-item'>
                     <span onClick={logout} className="nav-link">Signout</span>
                 </li>
             </Nav>

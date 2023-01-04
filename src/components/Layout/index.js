@@ -1,10 +1,13 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Header from "../Header";
 import {Col, Container, Row} from "react-bootstrap";
 import {NavLink} from "react-router-dom";
 import './style.css'
 
 function Layout(props) {
+
+    const [classter,setClasster] = useState('')
+
     return (
         <>
             <Header/>
@@ -14,11 +17,11 @@ function Layout(props) {
                         <Row>
                             <Col md={2} className={'sidebar'}>
                                 <ul>
-                                    <li><NavLink exact to={'/'}>Home</NavLink></li>
-                                    <li><NavLink to={'/page'}>Page</NavLink></li>
-                                    <li><NavLink to={'/category'}>Category</NavLink></li>
-                                    <li><NavLink to={'/products'}>Products</NavLink></li>
-                                    <li><NavLink to={'/orders'}>Orders</NavLink></li>
+                                    <li className={'link'}><NavLink exact to={'/'}>Home</NavLink></li>
+                                    <li className={'link'}><NavLink to={'/page'}>Page</NavLink></li>
+                                    <li className={'link'}><NavLink to={'/category'}>Category</NavLink></li>
+                                    <li className={'link'}><NavLink to={'/products'}>Products</NavLink></li>
+                                    <li className={'link'}><NavLink to={'/orders'}>Orders</NavLink></li>
                                 </ul>
                             </Col>
                             <Col md={10} style={{marginLeft:'auto',paddingTop:'60px'}}>

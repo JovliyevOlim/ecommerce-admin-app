@@ -1,0 +1,11 @@
+@media screen and (max-width:767.9px) {
+    li a{
+        display: block;
+        color: gray;
+        padding: 5px 10px;
+        box-sizing: border-box;
+        margin: 5px 0 5px 10px;
+        border-radius: 5px 0 0 5px;
+        text-decoration: none;
+    }
+}

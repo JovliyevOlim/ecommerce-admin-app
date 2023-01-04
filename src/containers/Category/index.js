@@ -208,7 +208,7 @@ function Category(props) {
             <Container>
                 <Row>
                     <Col md={12}>
-                        <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                        <div className={'category'}>
                             <h3>Category</h3>
                             <div className={'actionBtnContainer'}>
                                 <span>Actions:</span>
