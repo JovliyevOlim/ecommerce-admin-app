@@ -1,6 +1,7 @@
 import axiosInstance from "../helpers/axios";
 import {productConstants} from "./constants";
-
+import axios from "axios";
+import {api} from "../urlConfig";
 
 export const getProducts =()=>{
     return async (dispatch)=>{
@@ -25,11 +26,17 @@ export const getProducts =()=>{
 
 
 export const addProduct = (form)=>{
-    return async dispatch => {
+    console.log(form.get('productPicture'))
+    return async (dispatch) => {
         try{
-            console.log(form)
+            const config = {
+                headers:{
+                    "Content-Type":"multipart/form-data",
+                    'Authorization': localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : ''
+                }
+            }
             dispatch({type:productConstants.ADD_PRODUCTS_REQUEST});
-            const res = await axiosInstance.post('product/create',form)
+            const res = await axios.post(`${api}/product/create`,form,config)
             if (res.status === 201){
                 dispatch({type:productConstants.ADD_PRODUCTS_SUCCESS});
                 dispatch(getProducts());
@@ -61,6 +68,31 @@ export const deleteProductById = (payload) =>{
                 })
             }
         }catch (error){
+            console.log(error)
+        }
+    }
+}
+
+export const PictureUpload=(form)=>{
+    console.log(form)
+    return async (dispatch)=>{
+        try{
+            const res  = await  axios.post('picture/upload',form)
+
+            if (res.status === 201){
+
+                dispatch(getProducts());
+            }else{
+                const {error}  = res.data;
+                dispatch({
+                    type:productConstants.DELETE_PRODUCT_BY_ID_FAILURE,
+                    payload:{
+                        error
+                    }
+                })
+            }
+        }
+        catch (error){
             console.log(error)
         }
     }

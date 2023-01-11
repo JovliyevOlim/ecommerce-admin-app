@@ -1,9 +1,9 @@
-import React,{useState} from 'react';
+import React, {useState} from 'react';
 import Layout from "../../components/Layout";
-import {Button, Col, Container, Row, Table} from "react-bootstrap";
+import {Col, Container, Row, Table} from "react-bootstrap";
 import Modal from "../../components/Ui/Modal"
 import Input from "../../components/Ui/Input";
-import {addCategory, deleteProductById} from "../../action";
+import {addCategory, deleteProductById, PictureUpload} from "../../action";
 import {useDispatch, useSelector} from "react-redux";
 import {addProduct} from "../../action";
 import './style.css'
@@ -11,37 +11,36 @@ import {generatePublicUrl} from "../../urlConfig";
 
 function Product(props) {
     const [show, setShow] = useState(false);
-    const [productDetailModal,setProductDetailModal] = useState(false)
+    const [productDetailModal, setProductDetailModal] = useState(false)
     const categories = useSelector(state => state.category)
     const product = useSelector(state => state.product)
-    const dispatch =  useDispatch()
+    const dispatch = useDispatch()
+    const [name, setName] = useState('')
+    const [quantity, setQuantity] = useState('')
+    const [price, setPrice] = useState('')
+    const [description, setDescription] = useState('')
+    const [category, setCategory] = useState('')
+    const [productPictures, setProductPictures] = useState([])
+    const [productDetails, setProductDetails] = useState(null)
 
 
-    const [name,setName] = useState('')
-    const [quantity,setQuantity] = useState('')
-    const [price,setPrice] = useState('')
-    const [description,setDescription] = useState('')
-    const [category,setCategory] = useState('')
-    const [productPictures,setProductPictures] = useState([])
-    const [productDetails,setProductDetails] = useState(null)
-
-
-
-    const handleClose = () =>{
+    const handleClose = () => {
         setShow(false);
     }
 
-    const submitProductForm=()=>{
+    const submitProductForm = () => {
         const form = new FormData()
-        form.append('name',name)
-        form.append('quantity',quantity)
-        form.append('price',price)
-        form.append('description',description)
-        form.append('category',category)
+        const productPicture = Array.from(productPictures)
+        form.append('name', name)
+        form.append('quantity', quantity)
+        form.append('price', price)
+        form.append('description', description)
+        form.append('category', category)
 
-        for(let pic of productPictures){
+        for (let pic of productPicture) {
             form.append('productPicture',pic)
         }
+        console.log(productPictures)
 
         dispatch(addProduct(form))
         setShow(false);
@@ -49,27 +48,25 @@ function Product(props) {
 
     const handleShow = () => setShow(true);
 
-    const createCategoryList = (categories,options=[])=>{
-        for(let category of categories){
-            options.push({value:category._id,name:category.name});
-            if (category.children.length>0){
-                createCategoryList(category.children,options)
+    const createCategoryList = (categories, options = []) => {
+        for (let category of categories) {
+            options.push({value: category._id, name: category.name});
+            if (category.children.length > 0) {
+                createCategoryList(category.children, options)
             }
         }
 
         return options;
     }
 
-    const handleProductPictures = (e)=>{
-        setProductPictures([
-            ...productPictures,e.target.files[0]
-        ])
-        console.log(productPictures)
+    const handleProductPictures = (e) => {
+        setProductPictures(e.target.files)
     }
 
-    const renderProducts = ()=>{
+
+    const renderProducts = () => {
         return (
-            <Table style={{fontSize:'12px'}} responsive="sm">
+            <Table style={{fontSize: '12px'}} responsive="sm">
                 <thead>
                 <tr>
                     <th>#</th>
@@ -82,7 +79,7 @@ function Product(props) {
                 <tbody>
                 {
                     product.products.length > 0 ?
-                        product.products.map(product=>
+                        product.products.map(product =>
                             <tr key={product._id}>
                                 <td>1</td>
                                 <td>{product.name}</td>
@@ -90,14 +87,15 @@ function Product(props) {
                                 <td>{product.quantity}</td>
                                 <td>{product.category?.name}</td>
                                 <td>
-                                    <button onClick={()=>showProductDetailsModal(product)}>info</button>
-                                    <button onClick={()=>{
-                                        const payload = {productId:product._id};
+                                    <button onClick={() => showProductDetailsModal(product)}>info</button>
+                                    <button onClick={() => {
+                                        const payload = {productId: product._id};
                                         dispatch(deleteProductById(payload))
-                                    }}>del</button>
+                                    }}>del
+                                    </button>
                                 </td>
                             </tr>
-                        ):null
+                        ) : null
                 }
 
                 </tbody>
@@ -105,65 +103,66 @@ function Product(props) {
         )
     }
 
-    const renderAddProductModal = () =>{
+    const renderAddProductModal = () => {
         return (
             <Modal show={show} handleClose={handleClose} onSubmit={submitProductForm} modalTitle={'Add New Product'}>
                 <Input
                     label={'Product Name'}
                     value={name}
                     placeholder={'Product Name'}
-                    onChange={(e)=>setName(e.target.value)}
+                    onChange={(e) => setName(e.target.value)}
                 />
                 <Input
                     label={'Quantity'}
                     value={quantity}
                     placeholder={'Quantity'}
-                    onChange={(e)=>setQuantity(e.target.value)}
+                    onChange={(e) => setQuantity(e.target.value)}
                 />
                 <Input
                     label={'Price'}
                     value={price}
                     placeholder={'Price'}
-                    onChange={(e)=>setPrice(e.target.value)}
+                    onChange={(e) => setPrice(e.target.value)}
                 />
                 <Input
                     label={'Description'}
                     value={description}
                     placeholder={'Description'}
-                    onChange={(e)=>setDescription(e.target.value)}
+                    onChange={(e) => setDescription(e.target.value)}
                 />
                 <select className={'form-control'} value={category}
-                        onChange={(e)=>setCategory(e.target.value)}>
+                        onChange={(e) => setCategory(e.target.value)}>
                     <option>select category</option>
                     {
-                        createCategoryList(categories.categories).map(option=>
+                        createCategoryList(categories.categories).map(option =>
                             <option key={option.value} value={option.value}>{option.name}</option>
                         )
                     }
                 </select>
 
                 {
-                    productPictures.length > 0 ?
-                        productPictures.map((pic,index)=>
-                            <div key={index}>{pic?.name}</div>) : null
+                    productPictures.length
+                    // > 0 ?
+                    //     productPictures.map((pic, index) =>
+                    //         <div key={index}>{pic?.name}</div>) : null
                 }
 
-                <input type="file" name='productPictures' onChange={handleProductPictures}/>
+                <input type="file" name='productPicture' multiple onChange={handleProductPictures}/>
             </Modal>
         )
     }
 
-    const handleCloseProductDetailsModal = ()=>{
+    const handleCloseProductDetailsModal = () => {
         setProductDetailModal(false)
     }
 
-    const showProductDetailsModal=(product)=>{
-            setProductDetails(product)
-            setProductDetailModal(true)
+    const showProductDetailsModal = (product) => {
+        setProductDetails(product)
+        setProductDetailModal(true)
     }
 
-    const renderProductDetailsModal=()=>{
-        if (!productDetails){
+    const renderProductDetailsModal = () => {
+        if (!productDetails) {
             return null;
         }
         return (
@@ -172,16 +171,16 @@ function Product(props) {
                    modalTitle={'Product Details'}
                    size='lg'
             >
-               <Row>
-                   <Col md='6'>
-                       <label className={'key'}>Name</label>
-                       <p className={'value'}>{productDetails.name}</p>
-                   </Col>
-                   <Col md='6'>
-                       <label className={'key'}>Price</label>
-                       <p className={'value'}>{productDetails.price}</p>
-                   </Col>
-               </Row>
+                <Row>
+                    <Col md='6'>
+                        <label className={'key'}>Name</label>
+                        <p className={'value'}>{productDetails.name}</p>
+                    </Col>
+                    <Col md='6'>
+                        <label className={'key'}>Price</label>
+                        <p className={'value'}>{productDetails.price}</p>
+                    </Col>
+                </Row>
                 <Row>
                     <Col md='6'>
                         <label className={'key'}>Quantity</label>
@@ -201,12 +200,12 @@ function Product(props) {
                 <Row>
                     <Col>
                         <label className={'key'}>Product Pictures</label>
-                        <div style={{display:'flex',gap:'10px'}}>
-                            { productDetails.productPictures.map(picture=>
-                                    <div key={picture.img} className={'productImgContainer'}>
-                                        <img src={generatePublicUrl(picture.img)}/>
-                                    </div>
-                                )}
+                        <div style={{display: 'flex', gap: '10px'}}>
+                            {productDetails.productPictures.map(picture =>
+                                <div key={picture.img} className={'productImgContainer'}>
+                                    <img src={picture.img}/>
+                                </div>
+                            )}
                         </div>
                     </Col>
                 </Row>
@@ -219,7 +218,7 @@ function Product(props) {
             <Container>
                 <Row>
                     <Col md={12}>
-                        <div style={{display:'flex',justifyContent:'space-between'}}>
+                        <div style={{display: 'flex', justifyContent: 'space-between'}}>
                             <h3>Products</h3>
                             <button onClick={handleShow}>Add</button>
                         </div>
